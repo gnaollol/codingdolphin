@@ -1,6 +1,6 @@
-# InterviewPrep AI — independent Cloudflare deployment
+# Coding Dolphin
 
-This is a standalone copy of the full-stack app. It uses React/TypeScript with vinext on Cloudflare Workers, a D1 SQLite database for modules and quiz scores, and the Anthropic Messages API for new lessons. It does not depend on ChatGPT Sites.
+This is a standalone copy of the full-stack app. It uses React/TypeScript with vinext on Cloudflare Workers, a D1 SQLite database for modules and quiz scores, and the Anthropic Messages API for new lessons. 
 
 ## Where to edit the site
 
