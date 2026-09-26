@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   ArrowRight,
+  ArrowLeft,
   Brain,
   Check,
   Clock3,
@@ -88,18 +89,66 @@ const sample: ModuleRecord = {
       heading: "How it works",
 
       body: "The map hashes a key and uses the result to locate a bucket. Different keys can land in the same bucket; implementations resolve this with chaining or open addressing. Equality checks distinguish keys within a collision.",
+      check: {
+        question: "What happens when two keys hash to the same bucket?",
+        options: [
+          "Both keys are lost",
+          "A collision must be resolved",
+          "The map sorts every key",
+          "The bucket is deleted",
+        ],
+        correctIndex: 1,
+        explanations: [
+          "The keys can still be stored.",
+          "Correct: chaining or open addressing handles the collision.",
+          "Hash maps do not sort keys to handle collisions.",
+          "The bucket stays in use.",
+        ],
+      },
     },
 
     {
       heading: "Why it matters",
 
       body: "Hash maps trade extra memory for fast access by key. They are a common choice when you need to count, group, deduplicate, or index data without scanning every element.",
+      check: {
+        question: "What is a typical trade-off when using a hash map?",
+        options: [
+          "More memory for fast key access",
+          "Less memory for sorted keys",
+          "Slower access for no storage",
+          "No collisions ever",
+        ],
+        correctIndex: 0,
+        explanations: [
+          "Correct: extra storage supports fast access by key.",
+          "The section does not claim sorted keys.",
+          "Hash maps aim for fast access.",
+          "Collisions can still occur.",
+        ],
+      },
     },
 
     {
       heading: "Common use cases",
 
       body: "Frequency counters, caches, symbol tables, and two-sum lookups benefit from fast key-based access. Ordered traversal usually needs a different structure or an additional sorting step.",
+      check: {
+        question: "Which task is a natural use for a hash map?",
+        options: [
+          "Maintaining sorted traversal automatically",
+          "Counting how often each word appears",
+          "Rendering a page layout",
+          "Finding the median without processing data",
+        ],
+        correctIndex: 1,
+        explanations: [
+          "Ordered traversal needs more work.",
+          "Correct: a frequency counter maps each word to a count.",
+          "That is unrelated to key-based indexing.",
+          "A hash map does not directly provide a median.",
+        ],
+      },
     },
   ],
 
@@ -250,6 +299,208 @@ const sample: ModuleRecord = {
   ],
 };
 
+type SectionCheck = NonNullable<ModuleRecord["sections"][number]["check"]>;
+
+// Common built-in lessons and older cached copies do not have generated checks.
+const builtInChecks: Record<string, SectionCheck[]> = {
+  "Breadth-first search (BFS)": [
+    {
+      question: "When should BFS mark a neighbor as visited?",
+      options: [
+        "When it is enqueued",
+        "After every node is removed",
+        "Only after reaching the goal",
+        "Before the search starts",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: this prevents duplicate entries in the queue.",
+        "Waiting can enqueue the same node repeatedly.",
+        "The visited set is useful throughout the search.",
+        "Only the start is marked initially.",
+      ],
+    },
+    {
+      question: "What does BFS guarantee in an unweighted graph?",
+      options: [
+        "The fewest edges from the start",
+        "The lightest weighted path",
+        "A cycle-free graph",
+        "Sorted nodes",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: each layer adds one edge.",
+        "Weighted shortest paths need another algorithm.",
+        "The visited set prevents repeated visits, not cycles in the graph.",
+        "Traversal order is not a sort.",
+      ],
+    },
+    {
+      question: "Which problem is a good fit for BFS?",
+      options: [
+        "A minimum-move puzzle",
+        "A weighted shortest path with arbitrary weights",
+        "Sorting a list",
+        "Finding a hash collision",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: moves can be treated as unweighted edges.",
+        "Edge weights call for a suitable weighted-path algorithm.",
+        "BFS explores a graph rather than sorting values.",
+        "That is a hashing problem.",
+      ],
+    },
+  ],
+  "Big-O notation": [
+    {
+      question: "What is the Big-O bound of 3n² + 5n + 2?",
+      options: ["O(n²)", "O(n)", "O(1)", "O(3n² + 5n + 2) only"],
+      correctIndex: 0,
+      explanations: [
+        "Correct: n² is the dominant growing term.",
+        "n grows more slowly than n².",
+        "The work changes with n.",
+        "Big-O commonly simplifies to the dominant term.",
+      ],
+    },
+    {
+      question: "What does Big-O leave out?",
+      options: [
+        "Exact runtime on a specific machine",
+        "How work scales with input size",
+        "The dominant growth term",
+        "Whether an algorithm has a loop",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: constants and hardware can affect actual runtime.",
+        "That is what asymptotic analysis describes.",
+        "That term determines the common bound.",
+        "Loops can be part of the analysis.",
+      ],
+    },
+    {
+      question: "Which lookup usually takes O(log n) on a sorted array?",
+      options: [
+        "Binary search",
+        "Linear scan",
+        "Checking each element twice",
+        "Copying the entire array",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: binary search halves the range.",
+        "A full scan takes O(n).",
+        "Repeated scans still take O(n).",
+        "A full copy takes O(n).",
+      ],
+    },
+  ],
+  "Binary search": [
+    {
+      question:
+        "What should happen when the middle value is smaller than the target?",
+      options: [
+        "Move the left bound past the middle",
+        "Move the right bound past the middle",
+        "Search the entire range again",
+        "Stop immediately",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: the target can only be in the right half.",
+        "That discards the possible target range.",
+        "The point is to shrink the range.",
+        "The target may still be present.",
+      ],
+    },
+    {
+      question: "What input condition does standard binary search require?",
+      options: [
+        "Sorted order",
+        "Distinct values",
+        "An even array length",
+        "A linked list",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: ordering lets the search discard half.",
+        "Duplicates can still be searched.",
+        "Any length works.",
+        "Arrays allow efficient middle access.",
+      ],
+    },
+    {
+      question: "Where else can a binary-search pattern be used?",
+      options: [
+        "Finding an insertion position",
+        "Hashing an unsorted key",
+        "Walking every tree edge",
+        "Counting all characters",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: insertion boundaries can be found in sorted data.",
+        "Hashing is a different approach.",
+        "That is traversal.",
+        "That is a linear scan.",
+      ],
+    },
+  ],
+  "Two Sum": [
+    {
+      question: "For a value x, what do we look for in the map?",
+      options: [
+        "target − x",
+        "target + x",
+        "x − target",
+        "x itself every time",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: the complement completes the pair.",
+        "That would not add to the target.",
+        "The subtraction goes the other way.",
+        "The other value is generally different.",
+      ],
+    },
+    {
+      question: "What is the common benefit of a hash map in Two Sum?",
+      options: [
+        "Average O(n) time using extra memory",
+        "Always O(1) total time",
+        "Sorted output for free",
+        "No need to inspect values",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: each value is processed once with expected constant-time lookup.",
+        "The input must still be scanned.",
+        "A map does not sort results.",
+        "Each value is inspected.",
+      ],
+    },
+    {
+      question: "What can a two-pointer solution save when input is sorted?",
+      options: [
+        "Auxiliary space",
+        "The need to compare values",
+        "The need for sorted input",
+        "All implementation details",
+      ],
+      correctIndex: 0,
+      explanations: [
+        "Correct: two pointers can use O(1) extra space.",
+        "Pointers still compare values.",
+        "The approach depends on sorting.",
+        "Indices and duplicate values still need care.",
+      ],
+    },
+  ],
+};
+
 function CodeBlock({ code }: { code: string }) {
   const parts = code.split(
     /(#[^\n]*|\/\/[^\n]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\b(?:for|in|if|else|return|const|let|var|new|public|static|void|int|class|print)\b|\b\d+\b)/g,
@@ -266,8 +517,8 @@ function CodeBlock({ code }: { code: string }) {
                 : /^["']/.test(part)
                   ? "token-string"
                   : /^(for|in|if|else|return|const|let|var|new|public|static|void|int|class|print)$/.test(
-                    part,
-                  )
+                        part,
+                      )
                     ? "token-keyword"
                     : /^\d+$/.test(part)
                       ? "token-number"
@@ -379,7 +630,15 @@ function Diagram({ diagram }: { diagram: ModuleRecord["diagram"] }) {
 }
 
 export default function Home() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
+  const quizLocked = isPending || !session?.user;
+  const moduleRef = useRef<HTMLElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const [slide, setSlide] = useState(0);
+  const [checkAnswers, setCheckAnswers] = useState<Record<number, number>>({});
+  const [passedSections, setPassedSections] = useState<Record<number, boolean>>(
+    {},
+  );
 
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
@@ -404,6 +663,33 @@ export default function Home() {
 
   const [elapsed, setElapsed] = useState(0);
 
+  const codeSlide = module.sections.length + 1;
+  const tradeoffsSlide = codeSlide + 1;
+  const quizSlide = tradeoffsSlide + 1;
+  const totalSlides = quizSlide + 1;
+  const sectionIndex = slide - 1;
+  const currentCheck =
+    module.sections[sectionIndex]?.check ??
+    builtInChecks[module.title]?.[sectionIndex];
+  const canAdvance =
+    slide !== quizSlide &&
+    (!currentCheck || passedSections[sectionIndex] === true);
+
+  function goToSlide(next: number) {
+    if (next < 0 || next >= totalSlides || (next > slide && !canAdvance))
+      return;
+    setSlide(next);
+    moduleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function resetLesson() {
+    setSlide(0);
+    setCheckAnswers({});
+    setPassedSections({});
+    setAnswers({});
+    setResult(null);
+  }
+
   useEffect(() => {
     if (!session?.user) {
       setSavedIds([]);
@@ -418,7 +704,7 @@ export default function Home() {
 
       .then((items) => setSavedIds(items.map((item) => item.moduleId)))
 
-      .catch(() => { });
+      .catch(() => {});
   }, [session?.user?.id]);
 
   useEffect(() => {
@@ -465,7 +751,7 @@ export default function Home() {
 
       .then(setAttempts)
 
-      .catch(() => { });
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -486,7 +772,7 @@ export default function Home() {
 
           .then(setSuggestions)
 
-          .catch(() => { }),
+          .catch(() => {}),
 
       240,
     );
@@ -569,9 +855,7 @@ export default function Home() {
 
       setQuestion(topic);
 
-      setAnswers({});
-
-      setResult(null);
+      resetLesson();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -605,9 +889,7 @@ export default function Home() {
 
       setDepth(data.depth as typeof depth);
 
-      setAnswers({});
-
-      setResult(null);
+      resetLesson();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load topic.");
     } finally {
@@ -616,6 +898,8 @@ export default function Home() {
   }
 
   async function submitQuiz() {
+    if (quizLocked) return;
+
     if (Object.keys(answers).length !== module.quiz.length || result || saving)
       return;
 
@@ -662,7 +946,7 @@ export default function Home() {
 
         .then(setAttempts)
 
-        .catch(() => { });
+        .catch(() => {});
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save score.");
     } finally {
@@ -675,18 +959,20 @@ export default function Home() {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <a href = "/" className="brand" aria-label="CodingDolphin home">
+        <a href="/" className="brand" aria-label="CodingDolphin home">
           <span className="">
-
             CodingDolphin <strong></strong>
           </span>
         </a>
 
         <div className="topbar-right">
           {session?.user ? (
-            <>  
+            <>
               <details className="profile-menu">
-                <summary className="profile-trigger" aria-label="Open profile menu">
+                <summary
+                  className="profile-trigger"
+                  aria-label="Open profile menu"
+                >
                   <span className="avatar">
                     {session.user.name?.charAt(0).toUpperCase() || "U"}
                   </span>
@@ -709,7 +995,9 @@ export default function Home() {
             </>
           ) : (
             <>
-              <span className="topbar-note">Technical Interview Study Space</span>
+              <span className="topbar-note">
+                Technical Interview Study Space
+              </span>
               <a href="/login">Log in</a>
             </>
           )}
@@ -960,7 +1248,7 @@ export default function Home() {
             )}
           </section>
 
-          <section className="module-panel" aria-busy={loading}>
+          <section className="module-panel" aria-busy={loading} ref={moduleRef}>
             <div className="module-top">
               <div>
                 <div className="eyebrow module-eyebrow">
@@ -995,230 +1283,467 @@ export default function Home() {
               )}
             </div>
 
-            <div className="module-body">
-              <section className="definition">
-                <div className="section-kicker">01 / THE SHORT ANSWER</div>
-
-                <p>{module.definition}</p>
-              </section>
-
-              <div className="content-grid">
-                <div className="content-main">
-                  <section className="study-section">
-                    <div className="section-kicker">02 / UNDERSTAND IT</div>
-
-                    <h3>Under the hood</h3>
-
-                    {module.sections.map((s, i) => (
-                      <div key={i} className="explain-block">
-                        <h4>
-                          <span>0{i + 1}</span>
-
-                          {s.heading}
-                        </h4>
-
-                        <p>{s.body}</p>
-                      </div>
-                    ))}
-                  </section>
-
-                  <section className="study-section">
-                    <div className="section-kicker">03 / SEE IT IN ACTION</div>
-
-                    <div className="section-heading">
-                      <h3>Code example</h3>
-
-                      <span className="language-pill">
-                        <Code2 size={13} />
-
-                        {module.code.language}
-                      </span>
-                    </div>
-
-                    <CodeBlock code={module.code.snippet} />
-
-                    <p className="code-explain">{module.code.explanation}</p>
-                  </section>
+            <div
+              className="module-body"
+              onTouchStart={(event) => {
+                touchStartX.current = event.changedTouches[0]?.clientX ?? null;
+              }}
+              onTouchEnd={(event) => {
+                if (touchStartX.current === null) return;
+                const distance =
+                  event.changedTouches[0].clientX - touchStartX.current;
+                touchStartX.current = null;
+                if (distance < -80) goToSlide(slide + 1);
+                if (distance > 80) goToSlide(slide - 1);
+              }}
+            >
+              <div className="mb-6 rounded-xl border border-[#dce6e6] bg-white p-4">
+                <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#195d59]">
+                  <span>
+                    STEP {String(slide + 1).padStart(2, "0")} /{" "}
+                    {String(totalSlides).padStart(2, "0")}
+                  </span>
+                  <span>
+                    {Math.round(((slide + 1) / totalSlides) * 100)}% viewed
+                  </span>
                 </div>
-
-                <aside className="content-aside">
-                  <section className="diagram-card">
-                    <div className="section-kicker">VISUAL MODEL</div>
-
-                    <h3>How it connects</h3>
-
-                    <Diagram diagram={module.diagram} />
-                  </section>
-
-                  <section className="quick-card">
-                    <div className="section-kicker">INTERVIEW FOLLOW-UPS</div>
-
-                    {module.followUps.map((q, i) => (
-                      <p key={i}>
-                        <span>↳</span>
-
-                        {q}
-                      </p>
-                    ))}
-                  </section>
-                </aside>
+                <div
+                  className="mt-3 h-2 overflow-hidden rounded-full bg-[#e5efed]"
+                  aria-hidden="true"
+                >
+                  <div
+                    className="h-full rounded-full bg-[#195d59] transition-all"
+                    style={{ width: `${((slide + 1) / totalSlides) * 100}%` }}
+                  />
+                </div>
               </div>
 
-              {module.complexity.length > 0 && (
-                <section className="study-section complexity">
-                  <div className="section-kicker">04 / TRADE-OFFS</div>
+              {slide === 0 && (
+                <section className="definition">
+                  <div className="section-kicker">01 / THE SHORT ANSWER</div>
 
-                  <h3>Complexity at a glance</h3>
+                  <p>{module.definition}</p>
+                </section>
+              )}
 
-                  <div className="table-wrap">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Operation</TableHead>
+              {slide > 0 && slide < quizSlide && (
+                <div className="content-grid">
+                  <div className="content-main">
+                    {slide <= module.sections.length && (
+                      <section className="study-section">
+                        <div className="section-kicker">02 / UNDERSTAND IT</div>
 
-                          <TableHead>Time</TableHead>
+                        <h3>{module.sections[sectionIndex].heading}</h3>
 
-                          <TableHead>Space</TableHead>
+                        {module.sections
+                          .filter((_, i) => i === sectionIndex)
+                          .map((s) => (
+                            <div key={sectionIndex} className="explain-block">
+                              <h4>
+                                <span>
+                                  {String(sectionIndex + 1).padStart(2, "0")}
+                                </span>
 
-                          <TableHead>Notes</TableHead>
-                        </TableRow>
-                      </TableHeader>
+                                {s.heading}
+                              </h4>
 
-                      <TableBody>
-                        {module.complexity.map((row, i) => (
-                          <TableRow key={i}>
-                            <TableCell className="font-semibold">
-                              {row.operation}
-                            </TableCell>
+                              <p>{s.body}</p>
+                            </div>
+                          ))}
 
-                            <TableCell className="mono">{row.time}</TableCell>
+                        {currentCheck && (
+                          <div className="relative mt-7 rounded-xl border border-[#dce6e6] bg-[#f7fbfa] p-5">
+                            <div
+                              inert={quizLocked}
+                              aria-hidden={quizLocked}
+                              className={
+                                quizLocked
+                                  ? "pointer-events-none select-none blur-[5px]"
+                                  : ""
+                              }
+                            >
+                              <div className="section-kicker">
+                                QUICK COMPREHENSION CHECK
+                              </div>
+                              <h4 className="mt-2 font-semibold text-[#17282d]">
+                                {currentCheck.question}
+                              </h4>
+                              <div className="mt-4 grid gap-2">
+                                {currentCheck.options.map((option, choice) => (
+                                  <button
+                                    type="button"
+                                    key={choice}
+                                    aria-pressed={
+                                      checkAnswers[sectionIndex] === choice
+                                    }
+                                    onClick={() => {
+                                      if (quizLocked) return;
+                                      setCheckAnswers((old) => ({
+                                        ...old,
+                                        [sectionIndex]: choice,
+                                      }));
+                                      if (
+                                        choice === currentCheck.correctIndex
+                                      ) {
+                                        setPassedSections((old) => ({
+                                          ...old,
+                                          [sectionIndex]: true,
+                                        }));
+                                      }
+                                    }}
+                                    className={`rounded-lg border p-3 text-left text-sm transition hover:border-[#195d59] ${checkAnswers[sectionIndex] === choice ? "border-[#195d59] bg-white font-semibold" : "border-[#dce6e6] bg-white"}`}
+                                  >
+                                    <span className="mr-3 font-bold text-[#195d59]">
+                                      {String.fromCharCode(65 + choice)}.
+                                    </span>
+                                    {option}
+                                  </button>
+                                ))}
+                              </div>
+                              {checkAnswers[sectionIndex] !== undefined && (
+                                <p
+                                  role="status"
+                                  className={`mt-3 text-sm ${checkAnswers[sectionIndex] === currentCheck.correctIndex ? "text-[#195d59]" : "text-[#9c4c2a]"}`}
+                                >
+                                  {
+                                    currentCheck.explanations[
+                                      checkAnswers[sectionIndex]
+                                    ]
+                                  }
+                                  {checkAnswers[sectionIndex] !==
+                                    currentCheck.correctIndex &&
+                                    " Try another answer to continue."}
+                                </p>
+                              )}
+                            </div>
+                            {quizLocked && (
+                              <div className="absolute inset-0 flex items-center justify-center p-3">
+                                {isPending ? (
+                                  <p className="rounded-lg bg-white/95 p-3 text-sm text-[#64767a]">
+                                    Checking your account…
+                                  </p>
+                                ) : (
+                                  <a
+                                    href="/login"
+                                    className="rounded-lg bg-[#195d59] px-5 py-3 text-sm font-semibold text-white shadow-lg"
+                                  >
+                                    Log in to answer and continue
+                                  </a>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        {!currentCheck && (
+                          <p className="mt-4 text-sm text-[#64767a]">
+                            This saved lesson predates comprehension checks.
+                            Regenerate it for new questions, or continue
+                            reading.
+                          </p>
+                        )}
+                      </section>
+                    )}
 
-                            <TableCell className="mono">{row.space}</TableCell>
+                    {slide === codeSlide && (
+                      <section className="study-section">
+                        <div className="section-kicker">
+                          03 / SEE IT IN ACTION
+                        </div>
 
-                            <TableCell>{row.note}</TableCell>
-                          </TableRow>
+                        <div className="section-heading">
+                          <h3>Code example</h3>
+
+                          <span className="language-pill">
+                            <Code2 size={13} />
+
+                            {module.code.language}
+                          </span>
+                        </div>
+
+                        <CodeBlock code={module.code.snippet} />
+
+                        <p className="code-explain">
+                          {module.code.explanation}
+                        </p>
+                      </section>
+                    )}
+                    {slide === tradeoffsSlide &&
+                      module.complexity.length > 0 && (
+                        <section className="study-section complexity">
+                          <div className="section-kicker">04 / TRADE-OFFS</div>
+
+                          <h3>Complexity at a glance</h3>
+
+                          <div className="table-wrap">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Operation</TableHead>
+
+                                  <TableHead>Time</TableHead>
+
+                                  <TableHead>Space</TableHead>
+
+                                  <TableHead>Notes</TableHead>
+                                </TableRow>
+                              </TableHeader>
+
+                              <TableBody>
+                                {module.complexity.map((row, i) => (
+                                  <TableRow key={i}>
+                                    <TableCell className="font-semibold">
+                                      {row.operation}
+                                    </TableCell>
+
+                                    <TableCell className="mono">
+                                      {row.time}
+                                    </TableCell>
+
+                                    <TableCell className="mono">
+                                      {row.space}
+                                    </TableCell>
+
+                                    <TableCell>{row.note}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </section>
+                      )}
+                  </div>
+
+                  <aside className="content-aside">
+                    {slide === codeSlide && (
+                      <section className="diagram-card">
+                        <div className="section-kicker">VISUAL MODEL</div>
+
+                        <h3>How it connects</h3>
+
+                        <Diagram diagram={module.diagram} />
+                      </section>
+                    )}
+
+                    {slide === tradeoffsSlide && (
+                      <section className="quick-card">
+                        <div className="section-kicker">
+                          INTERVIEW FOLLOW-UPS
+                        </div>
+
+                        {module.followUps.map((q, i) => (
+                          <p key={i}>
+                            <span>↳</span>
+
+                            {q}
+                          </p>
                         ))}
-                      </TableBody>
-                    </Table>
+                      </section>
+                    )}
+                  </aside>
+                </div>
+              )}
+
+              {slide === quizSlide && (
+                <div className="relative">
+                  <div
+                    inert={quizLocked}
+                    aria-hidden={quizLocked}
+                    className={
+                      quizLocked
+                        ? "pointer-events-none select-none blur-[5px]"
+                        : ""
+                    }
+                  >
+                    <section className="quiz-section">
+                      <div className="quiz-heading">
+                        <div>
+                          <div className="section-kicker">
+                            05 / CHECK YOUR UNDERSTANDING
+                          </div>
+
+                          <h3>Quick quiz</h3>
+                        </div>
+
+                        <span>{module.quiz.length} QUESTIONS</span>
+                      </div>
+
+                      {module.quiz.map((q, i) => (
+                        <div className="quiz-question" key={i}>
+                          <h4>
+                            <span>{String(i + 1).padStart(2, "0")}</span>
+
+                            {q.question}
+                          </h4>
+
+                          <div className="quiz-options">
+                            {q.options.map((option, j) => (
+                              <button
+                                type="button"
+                                key={j}
+                                disabled={!!result}
+                                onClick={() =>
+                                  setAnswers((a) => ({ ...a, [i]: j }))
+                                }
+                                className={[
+                                  "quiz-option",
+
+                                  answers[i] === j ? "selected" : "",
+
+                                  result && j === q.correctIndex
+                                    ? "correct"
+                                    : "",
+
+                                  result &&
+                                  answers[i] === j &&
+                                  j !== q.correctIndex
+                                    ? "incorrect"
+                                    : "",
+                                ].join(" ")}
+                              >
+                                <span className="option-letter">
+                                  {String.fromCharCode(65 + j)}
+                                </span>
+
+                                <span>{option}</span>
+
+                                {result && j === q.correctIndex && (
+                                  <Check size={17} />
+                                )}
+                              </button>
+                            ))}
+                          </div>
+
+                          {result && (
+                            <p className="answer-note">
+                              {q.explanations[answers[i]]}{" "}
+                              {answers[i] !== q.correctIndex && (
+                                <span>
+                                  Correct answer:{" "}
+                                  {q.explanations[q.correctIndex]}
+                                </span>
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+
+                      <div className="quiz-footer">
+                        <Button
+                          disabled={
+                            Object.keys(answers).length !==
+                              module.quiz.length ||
+                            !!result ||
+                            saving
+                          }
+                          onClick={submitQuiz}
+                        >
+                          {saving
+                            ? "Saving…"
+                            : result
+                              ? "Quiz completed"
+                              : "Check answers"}
+                        </Button>
+
+                        {result && (
+                          <strong>
+                            {result.score}/{result.total} correct{" "}
+                            {module.id === "sample" && (
+                              <small>· Sample scores are not saved</small>
+                            )}
+                          </strong>
+                        )}
+                      </div>
+                    </section>
+                  </div>
+
+                  {quizLocked && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center p-4">
+                      <div className="w-full max-w-sm rounded-2xl border border-[#dce6e6] bg-white/95 p-6 text-center shadow-xl backdrop-blur-sm">
+                        {isPending ? (
+                          <p className="text-sm text-[#64767a]">
+                            Checking your account…
+                          </p>
+                        ) : (
+                          <>
+                            <h3 className="text-xl font-bold text-[#17282d]">
+                              Log in to unlock the quiz
+                            </h3>
+                            <p className="mt-2 text-sm text-[#64767a]">
+                              Test what you learned and save your score.
+                            </p>
+                            <a
+                              href="/login"
+                              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#195d59] px-6 py-2 font-semibold text-white hover:bg-[#134945]"
+                            >
+                              Log in
+                            </a>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {slide === quizSlide && (
+                <section className="related">
+                  <div className="section-kicker">KEEP EXPLORING</div>
+
+                  <h3>Related topics</h3>
+
+                  <div>
+                    {module.relatedTopics.map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => {
+                          setQuestion(t);
+
+                          ask(t);
+                        }}
+                      >
+                        {t}
+
+                        <ArrowRight size={14} />
+                      </button>
+                    ))}
                   </div>
                 </section>
               )}
 
-              <section className="quiz-section">
-                <div className="quiz-heading">
-                  <div>
-                    <div className="section-kicker">
-                      05 / CHECK YOUR UNDERSTANDING
-                    </div>
-
-                    <h3>Quick quiz</h3>
-                  </div>
-
-                  <span>{module.quiz.length} QUESTIONS</span>
-                </div>
-
-                {module.quiz.map((q, i) => (
-                  <div className="quiz-question" key={i}>
-                    <h4>
-                      <span>{String(i + 1).padStart(2, "0")}</span>
-
-                      {q.question}
-                    </h4>
-
-                    <div className="quiz-options">
-                      {q.options.map((option, j) => (
-                        <button
-                          type="button"
-                          key={j}
-                          disabled={!!result}
-                          onClick={() => setAnswers((a) => ({ ...a, [i]: j }))}
-                          className={[
-                            "quiz-option",
-
-                            answers[i] === j ? "selected" : "",
-
-                            result && j === q.correctIndex ? "correct" : "",
-
-                            result && answers[i] === j && j !== q.correctIndex
-                              ? "incorrect"
-                              : "",
-                          ].join(" ")}
-                        >
-                          <span className="option-letter">
-                            {String.fromCharCode(65 + j)}
-                          </span>
-
-                          <span>{option}</span>
-
-                          {result && j === q.correctIndex && (
-                            <Check size={17} />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-
-                    {result && (
-                      <p className="answer-note">
-                        {q.explanations[answers[i]]}{" "}
-                        {answers[i] !== q.correctIndex && (
-                          <span>
-                            Correct answer: {q.explanations[q.correctIndex]}
-                          </span>
-                        )}
-                      </p>
-                    )}
-                  </div>
-                ))}
-
-                <div className="quiz-footer">
-                  <Button
-                    disabled={
-                      Object.keys(answers).length !== module.quiz.length ||
-                      !!result ||
-                      saving
-                    }
-                    onClick={submitQuiz}
-                  >
-                    {saving
-                      ? "Saving…"
-                      : result
-                        ? "Quiz completed"
-                        : "Check answers"}
-                  </Button>
-
-                  {result && (
-                    <strong>
-                      {result.score}/{result.total} correct{" "}
-                      {module.id === "sample" && (
-                        <small>· Sample scores are not saved</small>
-                      )}
-                    </strong>
-                  )}
-                </div>
-              </section>
-
-              <section className="related">
-                <div className="section-kicker">KEEP EXPLORING</div>
-
-                <h3>Related topics</h3>
-
-                <div>
-                  {module.relatedTopics.map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => {
-                        setQuestion(t);
-
-                        ask(t);
-                      }}
-                    >
-                      {t}
-
-                      <ArrowRight size={14} />
-                    </button>
-                  ))}
-                </div>
-              </section>
+              <nav
+                aria-label="Lesson steps"
+                className="mt-8 flex items-center justify-between gap-3 border-t border-[#dce6e6] pt-5"
+              >
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => goToSlide(slide - 1)}
+                  disabled={slide === 0}
+                  aria-label="Previous step"
+                >
+                  <ArrowLeft size={18} />{" "}
+                  <span className="hidden sm:inline">Back</span>
+                </Button>
+                <span
+                  className="text-center text-sm text-[#64767a]"
+                  role="status"
+                >
+                  {currentCheck && !canAdvance
+                    ? "Answer correctly to continue"
+                    : slide === quizSlide
+                      ? "Final quiz"
+                      : "Swipe or tap Next"}
+                </span>
+                <Button
+                  type="button"
+                  onClick={() => goToSlide(slide + 1)}
+                  disabled={!canAdvance}
+                  aria-label="Next step"
+                >
+                  <span className="hidden sm:inline">Next</span>{" "}
+                  <ArrowRight size={18} />
+                </Button>
+              </nav>
             </div>
           </section>
         </div>
