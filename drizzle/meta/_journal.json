@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1790272165634,
+      "tag": "0000_rich_dreadnoughts",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790312609573,
+      "tag": "0001_woozy_ego",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790315514197,
+      "tag": "0002_hard_ares",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790317689821,
+      "tag": "0003_nice_red_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1790350078061,
+      "tag": "0004_fine_red_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1790358805963,
+      "tag": "0005_majestic_richard_fisk",
+      "breakpoints": true
+    }
+  ]
+}

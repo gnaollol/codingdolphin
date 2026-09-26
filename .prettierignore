@@ -1,0 +1,8 @@
+node_modules
+.next
+dist
+build
+.wrangler
+vendor
+next-env.d.ts
+pnpm-lock.yaml

@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "interviewprep-ai",
+  "main": "vinext/server/fetch-handler",
+  "compatibility_date": "2026-09-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "interviewprep-ai-db",
+      "database_id": "3045c61e-e16e-4a98-853c-3acc34556545",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}
