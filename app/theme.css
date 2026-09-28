@@ -1,0 +1,249 @@
+/* Global theme values used by the existing component styles. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #151e22;
+  --foreground: #e7f1ed;
+  --card: #202c30;
+  --card-foreground: #e7f1ed;
+  --popover: #263539;
+  --popover-foreground: #e7f1ed;
+  --primary: #63d69f;
+  --primary-foreground: #10291f;
+  --secondary: #293a3a;
+  --secondary-foreground: #d9eee3;
+  --muted: #28383a;
+  --muted-foreground: #afc5bd;
+  --accent: #304741;
+  --accent-foreground: #e2f6ea;
+  --border: #3d5152;
+  --input: #3d5152;
+  --ring: #73dfaa;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] main,
+html[data-theme="dark"] :is(.app-shell, .landing-page, .main-column) {
+  background-color: #151e22;
+  color: #e7f1ed;
+}
+
+html[data-theme="dark"]
+  :is(
+    .sidebar,
+    .ask-panel,
+    .module-panel,
+    .landing-card,
+    .diagram-card,
+    .quick-card,
+    .table-wrap,
+    .profile-menu-items,
+    .suggestions,
+    .quiz-option
+  ) {
+  background: #202c30;
+  color: #e7f1ed;
+  border-color: #3d5152;
+}
+
+html[data-theme="dark"]
+  :is(
+    .module-top,
+    .definition,
+    .quiz-section,
+    .diagram-wrap,
+    .query-field,
+    .suggestions button,
+    .recent-item:hover
+  ) {
+  background: #29383b;
+  color: #e7f1ed;
+  border-color: #3d5152;
+}
+
+html[data-theme="dark"]
+  :is(
+    .main-column h1,
+    .main-column h2,
+    .main-column h3,
+    .main-column h4,
+    .landing-content h1,
+    .landing-card strong,
+    .module-panel h2,
+    .quiz-question h4,
+    .stat strong
+  ) {
+  color: #f1f8f4;
+}
+
+html[data-theme="dark"]
+  :is(
+    .ask-heading p,
+    .module-meta,
+    .explain-block p,
+    .code-explain,
+    .sidebar-empty,
+    .sidebar-bottom,
+    .quick-card p,
+    .diagram-wrap p,
+    .landing-description,
+    .landing-card-content > span,
+    .recent-item small
+  ) {
+  color: #afc5bd;
+}
+
+/* Study modules contain several fixed light-theme text colors in globals.css. */
+html[data-theme="dark"]
+  :is(
+    .definition p,
+    .recent-item,
+    .stat,
+    .table-wrap td,
+    .table-wrap th,
+    .table-wrap .mono,
+    .language-pill,
+    .answer-note,
+    .quiz-footer strong,
+    .loading-note,
+    .suggestions small,
+    .selects label,
+    .prompts span
+  ) {
+  color: #c5dcd2;
+}
+
+html[data-theme="dark"]
+  :is(.eyebrow, .section-kicker, .sidebar-label, .module-eyebrow, .recent-label) {
+  color: #9bcec0;
+}
+
+html[data-theme="dark"] :is(.definition, .quiz-section, .diagram-wrap) {
+  background: #29383b;
+  border-color: #45605b;
+}
+
+html[data-theme="dark"] .module-top {
+  background: #29383b;
+}
+
+html[data-theme="dark"] :is(.table-wrap th, .language-pill) {
+  background: #304346;
+}
+
+html[data-theme="dark"] :is(.quiz-option.selected, .quiz-option.correct) {
+  background: #294c40;
+  color: #edfff5;
+}
+
+html[data-theme="dark"] .quiz-option.incorrect {
+  background: #4b3234;
+  color: #ffe9e6;
+}
+
+html[data-theme="dark"] .generate-btn {
+  background: #287a69;
+  color: #f4fff9;
+}
+
+html[data-theme="dark"] .generate-btn:disabled {
+  background: #315b55;
+  color: #d2e6df;
+}
+
+html[data-theme="dark"] .recent-item:hover {
+  color: #f1fff8;
+}
+
+html[data-theme="dark"] :is(input, textarea, select) {
+  background-color: #253539;
+  border-color: #506766;
+  color: #edf8f2;
+}
+
+html[data-theme="dark"] :is(input, textarea)::placeholder {
+  color: #9db8af;
+}
+
+/* Cover light surfaces and hardcoded text colors in page-level Tailwind classes. */
+html[data-theme="dark"] :is(.bg-white, [class*="bg-[#f"], [class*="bg-[#e"]) {
+  background-color: #26363a;
+}
+html[data-theme="dark"] :is([class*="border-[#d"], [class*="border-[#e"]) {
+  border-color: #3d5152;
+}
+html[data-theme="dark"]
+  :is(
+    [class*="text-[#17282d]"],
+    [class*="text-[#173a39]"],
+    [class*="text-[#183b3a]"],
+    [class*="text-[#344b4d]"],
+    [class*="text-[#394e51]"],
+    [class*="text-[#195d59]"]
+  ) {
+  color: #e1f0e8;
+}
+html[data-theme="dark"]
+  :is([class*="text-[#64767a]"], [class*="text-[#526a68]"]) {
+  color: #a9c3b8;
+}
+
+/* Preserve the dark site header and readable profile menu in either theme. */
+html[data-theme="dark"] :is(.topbar, .landing-header, main > header) {
+  background-color: #18292c;
+  color: #f0f8f5;
+}
+html[data-theme="dark"] :is(.topbar, .landing-header) .profile-menu-items {
+  background: #263539;
+  color: #e7f1ed;
+}
+html[data-theme="dark"]
+  :is(.topbar, .landing-header)
+  .profile-menu-items
+  :is(a, button) {
+  color: #e7f1ed;
+}
+
+.site-theme-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 80;
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #496560;
+  border-radius: 999px;
+  background: #fff;
+  padding: 8px 14px;
+  color: #195d59;
+  box-shadow: 0 8px 25px #0003;
+  font-size: 12px;
+  font-weight: 700;
+}
+.site-theme-toggle:hover {
+  background: #e8f6ee;
+}
+.site-theme-toggle:focus-visible {
+  outline: 3px solid #58d897;
+  outline-offset: 2px;
+}
+html[data-theme="dark"] .site-theme-toggle {
+  background: #2b403e;
+  border-color: #5b8778;
+  color: #e1f8e9;
+}
+html[data-theme="dark"] .site-theme-toggle:hover {
+  background: #35554b;
+}
+
+@media (max-width: 520px) {
+  .site-theme-toggle {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px;
+  }
+  .site-theme-toggle span {
+    display: none;
+  }
+}
