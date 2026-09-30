@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAuth } from "@/lib/auth";
-import {
-  claimVisitorAttempts,
-  getProgress,
-  saveAttempt,
-} from "@/lib/server";
+import { claimVisitorAttempts, getProgress, saveAttempt } from "@/lib/server";
 
 const bodySchema = z.object({
   moduleId: z.string().uuid(),
@@ -16,17 +12,25 @@ const cookieName = "interviewprep_visitor";
 
 export async function POST(request: NextRequest) {
   try {
-    const { moduleId, answers } = bodySchema.parse(await request.json());
-    const visitorId = request.cookies.get(cookieName)?.value ?? crypto.randomUUID();
     const session = await createAuth(request).api.getSession({
       headers: request.headers,
     });
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Log in to take the quiz." },
+        { status: 401 },
+      );
+    }
+
+    const { moduleId, answers } = bodySchema.parse(await request.json());
+    const visitorId =
+      request.cookies.get(cookieName)?.value ?? crypto.randomUUID();
 
     const result = await saveAttempt(
       visitorId,
       moduleId,
       answers,
-      session?.user.id,
+      session.user.id,
     );
 
     if (!result) {

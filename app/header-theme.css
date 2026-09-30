@@ -1,0 +1,57 @@
+/* Shared page header color, matching the coding workspace. */
+:root {
+  --site-header-background: #18292c;
+  --site-header-border: #34494a;
+  --site-header-text: #f0f8f5;
+  --site-header-muted: #b9d0ca;
+}
+
+main > header,
+.topbar,
+.landing-header {
+  background-color: var(--site-header-background);
+  border-bottom-color: var(--site-header-border);
+  color: var(--site-header-text);
+}
+
+:is(.topbar, .landing-header) :is(.brand, .landing-brand) {
+  color: var(--site-header-text);
+}
+
+:is(.topbar, .landing-header) :is(.brand, .landing-brand):hover {
+  color: #a8eac6;
+}
+
+:is(.topbar, .landing-header) :is(.brand, .landing-brand) strong {
+  color: #79ddb0;
+}
+
+:is(.topbar, .landing-header) .topbar-note {
+  color: var(--site-header-muted);
+}
+
+.topbar-right > a,
+.landing-header > a.landing-login {
+  color: var(--site-header-text);
+}
+
+.topbar-right > a:hover,
+.landing-header > a.landing-login:hover {
+  color: #a8eac6;
+}
+
+:is(.topbar, .landing-header) .avatar,
+:is(.topbar, .landing-header) .brand-mark {
+  background-color: #31544b;
+  color: #e9fff3;
+}
+
+/* Keep the account menu legible when it opens over the dark header. */
+:is(.topbar, .landing-header) .profile-menu-items {
+  background-color: #fff;
+  color: #173a39;
+}
+
+:is(.topbar, .landing-header) .profile-menu-items :is(a, button) {
+  color: #173a39;
+}

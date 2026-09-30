@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import styles from "../account-pages.module.css";
 
 export default function SettingsPage() {
   const { data: session, isPending} = authClient.useSession();
@@ -26,12 +27,12 @@ export default function SettingsPage() {
   }, [session?.user?.id]);
 
   if (isPending) {
-    return <main className="account-page">Loading settings...</main>;
+    return <main className={`account-page ${styles.page}`}>Loading settings...</main>;
   }
 
   if (!session?.user) {
     return (
-      <main className="account-page">
+      <main className={`account-page ${styles.page}`}>
         <h1>Settings</h1>
         <p>Log in to manage your account.</p>
         <a href="/login">Log in</a>
@@ -66,16 +67,16 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="account-page">
+    <main className={`account-page ${styles.page}`}>
       <a href="/">← Back to study desk</a>
       <h1>Settings</h1>
 
-      <section className="account-card">
+      <section className={`account-card ${styles.card}`}>
         <div>
           <h2>Display name</h2>
           <p>This name appears on your profile.</p>
 
-          <form onSubmit={saveName} className="account-form">
+          <form onSubmit={saveName} className={`account-form ${styles.form}`}>
             <input
               aria-label="Display name"
               value={name}
@@ -89,7 +90,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="account-card">
+      <section className={`account-card ${styles.card}`}>
         <div>
           <h2>Google account</h2>
           {googleLinked === null ? (
