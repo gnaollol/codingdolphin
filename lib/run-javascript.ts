@@ -1,4 +1,5 @@
 import type { CodingProblem } from "./coding-problems";
+import { compareResults } from "./coding-compare";
 
 export type TestResult = {
   input: unknown[];
@@ -13,15 +14,19 @@ export type TestResult = {
 const runnerDocument = `<!doctype html><html><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; form-action 'none'; base-uri 'none'"></head><body><script>
 window.addEventListener('message', function(event) {
   if (event.source !== parent || event.data?.kind !== 'run-tests') return;
-  const { nonce, code, functionName, tests } = event.data;
+  const { nonce, code, functionName, tests, comparison } = event.data;
   const results = [];
+  const compare = ${compareResults.toString()};
   try {
-    const solve = new Function(code + '\\nreturn ' + functionName + ';')();
+    const suffix = functionName === 'codecRoundTrip' ? '\\nreturn function(strs) { return decode(encode(strs)); };' : functionName === 'treeCodecRoundTrip' ? '\\nreturn function(root) { return deserialize(serialize(root)); };' : '\\nreturn ' + functionName + ';';
+    const solve = new Function(code + suffix)();
     if (typeof solve !== 'function') throw new Error('Define a function named ' + functionName + '.');
     for (const test of tests) {
       try {
-        const actual = solve(...test.args);
-        const passed = JSON.stringify(actual) === JSON.stringify(test.expected);
+        const args = JSON.parse(JSON.stringify(test.args));
+        const actual = solve(...args);
+        if (functionName === 'cloneGraph' && (actual === args[0] || actual.some(row => args[0].some(original => row === original)))) throw new Error('Return an independent copy of every adjacency row.');
+        const passed = compare(actual, test.expected, comparison, test.args);
         results.push({ input: test.args, expected: test.expected, actual, passed });
       } catch (error) {
         results.push({ input: test.args, expected: test.expected, passed: false, error: String(error) });
@@ -56,19 +61,32 @@ export function runJavaScript(
     }
 
     function onMessage(event: MessageEvent) {
-      if (event.source !== iframe.contentWindow || event.origin !== "null") return;
-      if (event.data?.kind !== "test-results" || event.data.nonce !== nonce) return;
+      if (event.source !== iframe.contentWindow || event.origin !== "null")
+        return;
+      if (event.data?.kind !== "test-results" || event.data.nonce !== nonce)
+        return;
       finish({ results: event.data.results, error: event.data.error });
     }
 
     const timer = window.setTimeout(
-      () => finish({ results: [], error: "Time limit exceeded (3 seconds). Check for an infinite loop." }),
+      () =>
+        finish({
+          results: [],
+          error: "Time limit exceeded (3 seconds). Check for an infinite loop.",
+        }),
       3000,
     );
     window.addEventListener("message", onMessage);
     iframe.addEventListener("load", () => {
       iframe.contentWindow?.postMessage(
-        { kind: "run-tests", nonce, code, functionName: problem.functionName, tests: problem.tests },
+        {
+          kind: "run-tests",
+          nonce,
+          code,
+          functionName: problem.functionName,
+          tests: problem.tests,
+          comparison: problem.comparison,
+        },
         "*",
       );
     });

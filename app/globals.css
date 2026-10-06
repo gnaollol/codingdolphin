@@ -1201,7 +1201,7 @@ button {
   border: 1px solid #cbd8d8;
   border-radius: 8px;
   background: white;
-  color: #195d59;
+  color: #4f5251;
   font: inherit;
   cursor: pointer;
 }
@@ -1384,4 +1384,113 @@ button {
   .landing-card-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.profile-menu-items a:hover,
+.profile-menu-items button:hover,
+.profile-menu-items a:focus-visible,
+.profile-menu-items button:focus-visible {
+  background: #433a3f;
+  color: #f2efee;
+}
+
+.profile-menu-items a:focus-visible,
+.profile-menu-items button:focus-visible {
+  outline: 2px solid #a6c8b8;
+  outline-offset: -2px;
+}
+
+.flashcards-page {
+  background: #1f1c1d;
+  color: #f2efee;
+}
+
+.flashcards-page > a {
+  color: #d3c6ce;
+}
+
+.flashcards-page > p {
+  color: #bdb5b9;
+}
+
+.flashcards-page .flashcard-form,
+.flashcards-page .flashcard-item {
+  padding: 24px;
+  border: 1px solid #51474d;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #292527, #252123);
+  color: #f2efee;
+  box-shadow: none;
+}
+
+.flashcards-page h2,
+.flashcards-page label {
+  color: #f2efee;
+}
+
+.flashcards-page textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #66585f;
+  border-radius: 10px;
+  background: #211d1f;
+  color: #f2efee;
+  font: inherit;
+  line-height: 1.6;
+}
+
+.flashcards-page textarea:focus {
+  border-color: #a6c8b8;
+  outline: 2px solid #a6c8b8;
+  outline-offset: 2px;
+}
+
+.flashcards-page .flashcard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.flashcards-page button,
+.flashcards-page .flashcard-start-quiz {
+  padding: 11px 18px;
+  border: 1px solid #66585f;
+  border-radius: 10px;
+  background: #383034;
+  color: #f2efee;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.flashcards-page button:hover:not(:disabled),
+.flashcards-page .flashcard-start-quiz:hover {
+  background: #493d44;
+  border-color: #8d7a85;
+}
+
+.flashcards-page button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.flashcards-page .flashcard-item p {
+  color: #ded5da;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.flashcards-page .flashcard-item .flashcard-hidden {
+  color: #aaa0a6;
+}
+
+.flashcards-page [role="alert"] {
+  color: #ef929d;
+}
+
+.flashcards-page :is(a, button):focus-visible {
+  outline: 2px solid #a6c8b8;
+  outline-offset: 3px;
 }

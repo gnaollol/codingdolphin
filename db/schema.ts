@@ -116,3 +116,43 @@ export const flashcardQuizAttempts = sqliteTable(
     index("idx_flashcard_quiz_user_created").on(t.userId, t.createdAt),
   ],
 );
+
+export const codingDrafts = sqliteTable(
+  "coding_drafts",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    problemSlug: text("problem_slug").notNull(),
+    language: text("language").notNull(),
+    code: text("code").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [
+    uniqueIndex("idx_coding_drafts_user_problem_language").on(
+      t.userId, t.problemSlug, t.language,
+    ),
+  ],
+);
+
+export const codingSubmissions = sqliteTable(
+  "coding_submissions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    problemSlug: text("problem_slug").notNull(),
+    language: text("language").notNull(),
+    code: text("code").notNull(),
+    passed: integer("passed").notNull(),
+    total: integer("total").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    index("idx_coding_submissions_user_problem_language_date").on(
+      t.userId, t.problemSlug, t.language, t.createdAt,
+    ),
+  ],
+);

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
@@ -22,6 +21,7 @@ import { csharp } from "@codemirror/legacy-modes/mode/clike";
 import { codingProblems, type CodingProblem } from "@/lib/coding-problems";
 import { codingLanguages, type CodingLanguage } from "@/lib/coding-languages";
 import { getStarterCode } from "@/lib/coding-starters";
+import blindStyles from "./blind75.module.css";
 import { runJavaScript, type TestResult } from "@/lib/run-javascript";
 import styles from "./problems.module.css";
 
@@ -51,7 +51,7 @@ function editorLanguage(language: CodingLanguage) {
 function sectionFor(problem: CodingProblem): string {
   if (problem.slug === "two-sum") return "Arrays & Hashing";
   if (problem.slug === "valid-parentheses") return "Stack";
-  if (problem.slug === "binary-search") return "Binary Search";
+  if (problem.collection === "Extra Practice") return "Extra Practice";
   return problem.category.split(" · ")[0];
 }
 
@@ -319,7 +319,15 @@ function ProblemWorkspace({
         </div>
         <div className={styles.descriptionScroll}>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-[#e5f4ed] px-2.5 py-1 text-xs font-semibold text-[#286a50]">
+            <span
+              className={
+                problem.difficulty === "Hard"
+                  ? blindStyles.hardBadge
+                  : problem.difficulty === "Medium"
+                    ? styles.mediumBadge
+                    : styles.easyBadge
+              }
+            >
               {problem.difficulty}
             </span>
             <span className="rounded-md bg-[#f1f5f4] px-2.5 py-1 text-xs font-medium text-[#607575]">
@@ -556,11 +564,21 @@ export default function ProblemsPage() {
     "Sliding Window",
     "Stack",
     "Binary Search",
+    "Linked List",
+    "Trees",
+    "Heap / Priority Queue",
+    "Backtracking",
+    "Tries",
+    "Graphs",
+    "Advanced Graphs",
     "1-D Dynamic Programming",
     "2-D Dynamic Programming",
     "Dynamic Programming",
     "Greedy",
+    "Intervals",
+    "Math & Geometry",
     "Bit Manipulation",
+    "Extra Practice",
   ];
   const categories = Array.from(new Set(codingProblems.map(sectionFor))).sort(
     (a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b),
@@ -570,7 +588,7 @@ export default function ProblemsPage() {
     <main className="min-h-screen bg-[#eaf0ee] text-[#173a39]">
       <header className="border-b border-[#34494a] bg-[#18292c] text-[#f0f8f5]">
         <div className="mx-auto flex min-h-14 max-w-[1800px] flex-wrap items-center justify-between gap-3 px-4 py-2">
-          <Link
+          <a
             href="/"
             className="inline-flex items-center gap-2 font-bold tracking-tight hover:text-[#8aebba]"
           >
@@ -578,13 +596,13 @@ export default function ProblemsPage() {
             <span className="hidden border-l border-[#617573] pl-3 text-sm font-normal text-[#bacdc8] sm:inline">
               Practice
             </span>
-          </Link>
-          <Link
+          </a>
+          <a
             href="/study"
             className="inline-flex items-center gap-1.5 text-sm text-[#c0d7cf] hover:text-white"
           >
             <ArrowLeft size={16} /> Study topics
-          </Link>
+          </a>
         </div>
       </header>
       <div className="mx-auto max-w-[1800px] px-3 pb-3">
@@ -602,7 +620,18 @@ export default function ProblemsPage() {
                 your solution.
               </p>
               <span className={styles.availableCount}>
-                {codingProblems.length} problems available
+                {
+                  codingProblems.filter(
+                    (item) => item.collection === "Blind 75",
+                  ).length
+                }{" "}
+                Problems ·{" "}
+                {
+                  codingProblems.filter(
+                    (item) => item.collection === "Extra Practice",
+                  ).length
+                }{" "}
+                extra practice
               </span>
             </section>
             <div className="mt-8 space-y-2">
@@ -647,7 +676,9 @@ export default function ProblemsPage() {
                             className={
                               item.difficulty === "Easy"
                                 ? styles.easyBadge
-                                : styles.mediumBadge
+                                : item.difficulty === "Hard"
+                                  ? blindStyles.hardBadge
+                                  : styles.mediumBadge
                             }
                           >
                             {item.difficulty}

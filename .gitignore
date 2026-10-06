@@ -2,7 +2,7 @@ node_modules/
 dist/
 .next/
 .wrangler/
-.env
+.vinext/
 .env.*
 !.env.example
 .dev.vars
